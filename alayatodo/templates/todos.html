@@ -1,14 +1,16 @@
 {% extends "layout.html" %}
-
+{% import "bootstrap/wtf.html" as wtf %}
 {% block content %}
 <div class="col-md-4 col-md-offset-4">
     <h1>Todo List:</h1>
+    <br>
     <table class="table table-striped">
         <th>#</th><th>User</th><th>Description</th><th></th>
-        {% for todo in todos %}
+
+        {% for todo in todos.items: %}
             <tr>
                 <td>{{ todo.id }}</td>
-                <td>{{ todo.user_id }}</td>
+                <td>{{ todo.owner_id }}</td>
                 <td>
                     <a href="{{ url_for('todo', id=todo.id) }}">
                        {{ todo.description }}
@@ -18,19 +20,26 @@
                     <form method="post" action="{{ url_for('todo_delete', id=todo.id) }}">
                         <button type="submit" class="btn btn-xs btn-danger"><span class="glyphicon glyphicon-remove glyphicon-white"></span></button>
                     </form>
+
                 </td>
             </tr>
         {% endfor %}
-        <tr>
-            <form method="post" action="{{ url_for('todos_POST') }}">
-                <td colspan="3">
-                    <input type="textbox" name="description" class="small-6 small-center" placeholder="Description...">
-                </td>
-                <td>
-                    <button type="submit" class="btn btn-sm btn-primary">Add</button>
-                </td>
-            </form>
+           <tr>
+            {{ form.csrf_token() }}
+            {{ wtf.quick_form(form,novalidate=True) }}
+
         </tr>
+
     </table>
+    {% for page in todos.iter_pages(left_edge=3, right_edge=3, left_current=3, right_current=3) %}
+
+        {% if page %}
+          <a href="{{ url_for('todos', pg=page) }}">{{ page }}</a>
+        {% else %}
+          ...
+        {% endif %}
+
+    {% endfor %}
+
 </div>
 {% endblock %}

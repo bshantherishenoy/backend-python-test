@@ -1,8 +1,10 @@
 from flask import Flask, g
 import sqlite3
-
+import os
 # configuration
-DATABASE = '/tmp/alayatodo.db'
+PROJECT_ROOT = os.path.dirname(os.path.realpath(__file__))
+print(PROJECT_ROOT)
+DATABASE = os.path.join(PROJECT_ROOT, 'tmp', 'alayatodo.db')
 DEBUG = True
 SECRET_KEY = 'development key'
 USERNAME = 'admin'
@@ -11,6 +13,9 @@ PASSWORD = 'default'
 
 app = Flask(__name__)
 app.config.from_object(__name__)
+
+
+
 
 
 def connect_db():
@@ -29,6 +34,5 @@ def teardown_request(exception):
     db = getattr(g, 'db', None)
     if db is not None:
         db.close()
-
 
 import alayatodo.views
